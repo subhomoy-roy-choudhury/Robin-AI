@@ -4,9 +4,19 @@ from enum import Enum
 class PlatformEnum(Enum):
     GROQ = "groq"
     OPENAI = "openai"
+    HUGGINGFACE = "huggingface"
 
 
 AI_MODELS = [
+    {
+        "name": "Phi-3.5-mini",
+        "description": "",
+        "platform": PlatformEnum.HUGGINGFACE,
+        "model_name": "microsoft/Phi-3.5-mini-instruct",
+        "developer": "Microsoft",
+        "details": {},
+        "references": ["https://huggingface.co/microsoft/Phi-3.5-mini-instruct"],
+    },
     {
         "name": "Gemma 2 9B",
         "description": "",
