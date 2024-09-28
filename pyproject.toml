@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "robinai"
+version = "0.1.0"
+description = ""
+authors = ["Subhomoy Roy Choudhury <subhomoyrchoudhury@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.38.0"
+langchain-groq = "^0.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
