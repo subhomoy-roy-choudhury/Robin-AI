@@ -3,6 +3,12 @@ from abc import ABC, abstractmethod
 import streamlit as st
 from constants import AI_MODELS, PlatformEnum
 
+import yaml
+from yaml.loader import SafeLoader
+import streamlit_authenticator as stauth
+from streamlit_authenticator.utilities import LoginError
+    
+
 # Langchain
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -113,10 +119,41 @@ def LLM_Factory(platform: str) -> BaseLLM:
     raise Exception("Error in fetching Model")
 
 
-if __name__ == "__main__":
-    auto_select_model_check = False
+# Load configuration from file
+def load_config(file_path: str = "auth.config.yaml") -> dict:
+    with open(file_path) as file:
+        return yaml.load(file, Loader=SafeLoader)
 
-    # SideBar
+
+# Initialize authenticator
+def initialize_authenticator(config: dict) -> stauth.Authenticate:
+    return stauth.Authenticate(
+        config["credentials"],
+        config["cookie"]["name"],
+        config["cookie"]["key"],
+        config["cookie"]["expiry_days"],
+        config["pre-authorized"],
+    )
+
+
+# Display authentication status and handle logout
+def handle_authentication(authenticator: stauth.Authenticate):
+    try:
+        authenticator.login()
+    except LoginError as e:
+        st.error(e)
+
+    if st.session_state.get("authentication_status"):
+        authenticator.logout()
+        st.write(f'Welcome *{st.session_state["name"]}*')
+    elif st.session_state.get("authentication_status") is False:
+        st.error("Username/password is incorrect")
+    elif st.session_state.get("authentication_status") is None:
+        st.warning("Please enter your username and password")
+
+
+# Display sidebar options
+def display_sidebar() -> dict:
     with st.sidebar:
         auto_select_model_check = st.checkbox("Select Model")
 
@@ -126,12 +163,14 @@ if __name__ == "__main__":
             disabled=not auto_select_model_check,
             format_func=lambda index: f"{AI_MODELS[index]['platform'].value.upper()}: {AI_MODELS[index]['name']}",
         )
-        model_information = AI_MODELS[model_index]
+        return {
+            "auto_select_model_check": auto_select_model_check,
+            "model_index": model_index,
+        }
 
-    # Title
-    st.title("Robin AI")
 
-    st.caption("🚀 A Streamlit chatbot powered by OpenAI")
+# Handle chat interaction
+def handle_chat_interaction(auto_select_model_check: bool, model_information: dict):
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
             {"role": "assistant", "content": "How can I help you?"}
@@ -144,23 +183,46 @@ if __name__ == "__main__":
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
-        msg = None
-
-        # Generate a new response if last message is not from assistant
-        if st.session_state.messages[-1]["role"] != "assistant":
+        # Generate response only if a model is selected and user has entered a prompt
+        if auto_select_model_check and model_information:
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
-                    if auto_select_model_check:
-                        platform = model_information.get("platform")
-                        model_func = LLM_Factory(platform)
-                        model = model_func.load_model(model_information["model_name"])
+                    platform = model_information.get("platform")
+                    model_func = LLM_Factory(platform)
+                    model = model_func.load_model(model_information["model_name"])
 
-                        msg = model_func.chat(model, st.session_state.messages[1:])
+                    # Generate assistant response
+                    msg = model_func.chat(model, st.session_state.messages[1:])
+                    if msg:
                         st.write(msg)
-                    else:
-                        st.info("Please select a model to continue.")
-                        st.stop()
+                        st.session_state.messages.append(
+                            {"role": "assistant", "content": msg}
+                        )
+        else:
+            st.info("Please select a model to continue.")
 
-            # Append response only if msg is not None
-            if msg:
-                st.session_state.messages.append({"role": "assistant", "content": msg})
+
+# Main function to encapsulate all logic
+def main():
+    config = load_config()
+    authenticator = initialize_authenticator(config)
+
+    handle_authentication(authenticator)
+    
+    # Proceed only if user is authenticated
+    if st.session_state.get("authentication_status"):
+        sidebar_options = display_sidebar()
+        auto_select_model_check = sidebar_options["auto_select_model_check"]
+        model_information = AI_MODELS[sidebar_options["model_index"]]
+
+        # Set main content title and description
+        st.title("Robin AI")
+        st.caption("🚀 A Streamlit chatbot powered by OpenAI")
+
+        # Handle chat interaction
+        handle_chat_interaction(auto_select_model_check, model_information)
+
+
+# Run the main function
+if __name__ == "__main__":
+    main()
