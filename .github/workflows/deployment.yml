@@ -23,8 +23,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry streamlit pyyaml
           poetry install --no-root
+          pip freeze > requirements.txt
 
-      
       - name: Deploy to Streamlit
         uses: streamlit/streamlit-app-action@v0.0.3
         with:
