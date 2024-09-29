@@ -20,8 +20,10 @@ jobs:
       
       - name: Install dependencies with Poetry
         run: |
-          pip install poetry
+          python -m pip install --upgrade pip
+          pip install poetry streamlit
           poetry install
+
       
       - name: Deploy to Streamlit
         uses: streamlit/streamlit-app-action@v0.0.3
