@@ -1,4 +1,3 @@
-import os
 from abc import ABC, abstractmethod
 import streamlit as st
 from constants import AI_MODELS, PlatformEnum
@@ -35,7 +34,7 @@ class GroqAILLM(BaseLLM):
         pass
 
     def fetch_api_key(self) -> str:
-        api_key = os.getenv("GROQ_API_KEY", None)
+        api_key = st.secrets.get("GROQ_API_KEY", None)
         if not api_key:
             raise Exception("Groq API Key Not Found")
         return api_key
@@ -74,7 +73,7 @@ class HuggingFaceAILLM(BaseLLM):
         pass
 
     def fetch_api_key(self) -> str:
-        api_key = os.getenv("HUGGINGFACE_API_KEY", None)
+        api_key = st.secrets.get("HUGGINGFACE_API_KEY", None)
         if not api_key:
             raise Exception("HuggingFace API Key Not Found")
         return api_key

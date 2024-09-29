@@ -1,0 +1,30 @@
+name: Streamlit Deployment
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  streamlit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies with Poetry
+        run: |
+          pip install poetry
+          poetry install
+      
+      - name: Deploy to Streamlit
+        uses: streamlit/streamlit-app-action@v0.0.3
+        with:
+          app-path: app.py
+          ruff: true
