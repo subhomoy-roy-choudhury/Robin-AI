@@ -172,7 +172,7 @@ if st.session_state.get("authentication_status"):
 
     # Set main content title and description
     st.title("Robin AI")
-    st.caption("🚀 A Streamlit chatbot powered by OpenAI")
+    st.caption("🚀 A Streamlit chatbot powered by Multiple LLMs")
 
     # Handle chat interaction
     handle_chat_interaction(auto_select_model_check, model_information)
