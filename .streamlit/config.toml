@@ -1,6 +1,15 @@
 [theme]
-primaryColor="#d33682"
-backgroundColor="#002b36"
-secondaryBackgroundColor="#586e75"
-textColor="#fafafa"
-font="sans serif"
+# Primary color (buttons, sliders, etc.)
+primaryColor="#40E0D0"  # Turquoise color
+
+# Background color for the main content area
+backgroundColor="#FFFFFF"  # White color
+
+# Background color for sidebars and secondary sections
+secondaryBackgroundColor="#F0F0F0"  # Light grey for contrast
+
+# Text color for headers, labels, and body text
+textColor="#000000"  # Black text color for high contrast on white background
+
+# Font to use for the entire application
+font="sans serif"  # Default sans-serif font family
