@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         # Install your dependencies here, if any
-        pip install bs4 pandas
+        pip install bs4 pandas requests
 
     - name: Run script
       run: python src/scraper/openllm_leaderboard.py --json
