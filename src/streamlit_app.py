@@ -101,8 +101,8 @@ def main():
 
         pg = st.navigation(
             {
-                "Apps": [chatbot_page, gorilla_app],
-                "Miscelleneous": [llm_optimiser],
+                "Apps": [chatbot_page, gorilla_app, llm_optimiser],
+                "Miscelleneous": [],
             }
         )
 
