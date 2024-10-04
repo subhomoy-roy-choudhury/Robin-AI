@@ -27,7 +27,7 @@ jobs:
         pip install bs4 pandas requests
 
     - name: Run script
-      run: python src/scraper/openllm_leaderboard.py --json
+      run: python src/scraper/openllm_leaderboard.py -json
 
     - name: Commit and push if it's changed
       run: |
