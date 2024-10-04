@@ -4,6 +4,10 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import json
 
+"""
+    OpenLLM Leaderboard Scraper
+    Reference :- https://github.com/Weyaxi/scrape-open-llm-leaderboard
+"""
 
 def get_json_format_data():
     url = "https://open-llm-leaderboard-open-llm-leaderboard.hf.space/"
@@ -64,12 +68,15 @@ def get_datas(data):
 
     return result_list
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Scrape and export data from the Hugging Face leaderboard")
+    parser = argparse.ArgumentParser(
+        description="Scrape and export data from the Hugging Face leaderboard"
+    )
     parser.add_argument("-csv", action="store_true", help="Export data to CSV")
     parser.add_argument("-html", action="store_true", help="Export data to HTML")
     parser.add_argument("-json", action="store_true", help="Export data to JSON")
-    
+
     args = parser.parse_args()
 
     data = get_json_format_data()
@@ -88,7 +95,7 @@ def main():
         print("Data exported to HTML")
 
     if args.json:
-        df.to_json("data/open-llm-leaderboard.json", orient='records')
+        df.to_json("data/open-llm-leaderboard.json", orient="records")
         print("Data exported to JSON")
 
 
