@@ -1,14 +1,7 @@
 import streamlit as st
-import yaml
-from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 from streamlit_authenticator import LoginError
-
-
-# Load configuration from file
-def load_config(file_path: str = "auth.config.yaml") -> dict:
-    with open(file_path) as file:
-        return yaml.load(file, Loader=SafeLoader)
+from helpers import load_config
 
 
 # Initialize authenticator
@@ -22,20 +15,57 @@ def initialize_authenticator(config: dict) -> stauth.Authenticate:
     )
 
 
-# Display authentication status and handle logout
-def handle_authentication(authenticator: stauth.Authenticate):
+import streamlit as st
+import streamlit_authenticator as stauth
+
+
+def guest_login_flow():
+    """Handle the guest login flow."""
+    if st.button("Signup as Guest"):
+        st.session_state.update(
+            {
+                "guest_clicked": True,
+                "authentication_status": True,
+                "role": "guest",
+                "name": "Guest",
+            }
+        )
+        return True  # Indicates that the user has signed up as a guest
+    return False  # Guest login has not been initiated
+
+
+def member_login_flow(authenticator: stauth.Authenticate):
+    """Handle the member login flow using the authenticator."""
     try:
         authenticator.login()
     except LoginError as e:
         st.error(e)
 
+    # Display appropriate message based on authentication status
     if st.session_state.get("authentication_status"):
-        st.write(f'Welcome *{st.session_state["name"]}*')
-        authenticator.logout()
+        st.write(f"Welcome, *{st.session_state['name']}*")
+        authenticator.logout("Logout", "sidebar")
+        st.session_state.role = "member"
     elif st.session_state.get("authentication_status") is False:
-        st.error("Username/password is incorrect")
-    elif st.session_state.get("authentication_status") is None:
-        st.warning("Please enter your username and password")
+        st.error("Incorrect username or password.")
+    else:
+        st.warning("Please enter your username and password.")
+
+
+def handle_authentication(authenticator: stauth.Authenticate):
+    """Manage the overall authentication flow based on guest or member login."""
+    # Separate flow for guest login
+    if st.session_state.get("guest_clicked", False):
+        st.write("You are logged in as Guest")
+        st.write(f"Welcome, *{st.session_state['name']}*")
+        st.session_state.role = "guest"
+    else:
+        # Attempt guest login first
+        guest_signed_up = guest_login_flow()
+
+        # If not a guest, proceed with member login
+        if not guest_signed_up:
+            member_login_flow(authenticator)
 
 
 # --- MAIN APP ---
