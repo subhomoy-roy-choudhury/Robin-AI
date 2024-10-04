@@ -1,0 +1,43 @@
+name: Daily Fetch LLM Leaderboard Data
+
+on:
+    workflow_dispatch:
+    schedule:
+        # https://crontab.guru/
+        - cron: "0 0 */3 * *" # At 00:00 on every 3rd day-of-month.
+
+jobs:
+  run-python-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Use the Python version needed
+
+    - name: Install dependencies
+      run: |
+        # Install your dependencies here, if any
+        pip install bs4 pandas
+
+    - name: Run script
+      run: python src/scraper/openllm_leaderboard.py --json
+
+    - name: Commit and push if it's changed
+      run: |
+        git config --global user.email "subhomoyrchoudhury@gmail.com"
+        git config --global user.name "robin-ai"
+        git add data/*
+        git commit -m "🔄 Update data via cron job" || echo "No changes to commit"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master
