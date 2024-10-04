@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 from streamlit_authenticator import LoginError
 from helpers import load_config
+from views.llm_leaderboard import llm_list_page, llm_stats_page, llm_leaderboard_page
 
 
 # Initialize authenticator
@@ -98,11 +99,20 @@ def main():
             title="LLM Cost Optimiser",
             icon=":material/bar_chart:",
         )
+        llm_list = st.Page(
+            llm_list_page, title="LLM List", icon=":material/bar_chart:"
+        )
+        llm_stats = st.Page(
+            llm_stats_page, title="LLM Stats", icon=":material/bar_chart:"
+        )
+        llm_leaderboard = st.Page(
+            llm_leaderboard_page, title="LLM leaderboard", icon=":material/bar_chart:"
+        )
 
         pg = st.navigation(
             {
                 "Apps": [chatbot_page, gorilla_app, llm_optimiser],
-                "Miscelleneous": [],
+                "Miscelleneous": [llm_list, llm_stats, llm_leaderboard],
             }
         )
 
