@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 
 from src.constants import AI_MODELS
 
+"""
+LLM Leaderboard
+Reference :- https://github.com/Jcharis/llm-list
+"""
+
 leaderboard_filename = "data/open-llm-leaderboard.json"
 data = []
 
