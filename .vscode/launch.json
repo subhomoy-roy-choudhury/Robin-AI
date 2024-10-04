@@ -12,7 +12,7 @@
             "envFile": "${workspaceFolder}/.env",
             "args": [
                 "run",
-                "streamlit_app.py",
+                "src/streamlit_app.py",
             ],
         }
     ]

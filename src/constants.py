@@ -1,11 +1,13 @@
 from enum import Enum
 
+class UserRole(Enum):
+    MEMBER = "member"
+    GUEST = "guest"
 
 class PlatformEnum(Enum):
     GROQ = "groq"
     OPENAI = "openai"
     HUGGINGFACE = "huggingface"
-
 
 AI_MODELS = [
     {

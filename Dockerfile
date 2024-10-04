@@ -14,12 +14,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN pip install poetry
-RUN poetry config virtualenvs.create false
+# RUN pip install poetry
+# RUN poetry config virtualenvs.create false
 
 # install project dependencies
-COPY pyproject.toml poetry.lock* /usr/src/main/
-RUN poetry install --no-dev --no-interaction --no-ansi
+# COPY pyproject.toml poetry.lock* /usr/src/main/
+# RUN poetry install --no-dev --no-interaction --no-ansi
+
+COPY requirements.txt /usr/src/main/
+RUN pip install -r requirements.txt
 
 
 # copy project
