@@ -35,9 +35,11 @@ class GroqAILLM(BaseLLM):
                 model_name=model_name,
             )
             self.model = model
+            return True
         except Exception as _:
             st.error("Error in loading Groq model. Please check the API Key.")
-
+        return False
+    
     def format_messages(self, messages: list) -> str:
         return [
             (msg["role"] if msg["role"] != "user" else "human", msg["content"])
